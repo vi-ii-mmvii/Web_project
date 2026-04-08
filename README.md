@@ -12,7 +12,10 @@
 
 "Кодим. Тестим. Деплоим. Повторяем." 🔁
 
-<p> </p>
+<div align="center"> 
+  # 🎯 PlanSync
+### Shared Calendar for Teams & Friends • Angular 17 + Django DRF + JWT
+
 User Functionality
 1. Authentication and personal dashboard
 The personal dashboard is the main page of the user. It shows:
@@ -46,3 +49,4 @@ Notifications can include:
 -selected meeting date and time
 -team name
 -quick link to create or open the final event.
+</div>
