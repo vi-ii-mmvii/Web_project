@@ -17,6 +17,12 @@ export class ApiService {
         localStorage.setItem('refresh', tokens.refresh);
       })
     );
+  }createGroup(data: { name: string; description: string }): Observable<Group> {
+    return this.http.post<Group>(`${this.base}/groups/`, data);
+  }
+
+  joinGroup(code: string): Observable<Group> {
+    return this.http.post<Group>(`${this.base}/groups/join/`, { code });
   }
   getGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(`${this.base}/groups/`);
