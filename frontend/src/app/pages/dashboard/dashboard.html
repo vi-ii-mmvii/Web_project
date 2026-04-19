@@ -1,1 +1,82 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+
+
+  <nav class="navbar">
+    <span class="logo">PlanSync</span>
+    <div class="nav-links">
+      <a routerLink="/groups">Группы</a>
+      <a routerLink="/invitations">Приглашения</a>
+      <a routerLink="/profile">Профиль</a>
+      <button class="btn-logout" (click)="logout()">Выйти</button>
+    </div>
+  </nav>
+
+  <div class="content">
+
+
+    <div class="welcome">
+      <h1>Привет, {{ username || 'пользователь' }} 👋</h1>
+      <p>Вот что у тебя запланировано</p>
+    </div>
+
+    @if (error) {
+      <div class="error-box">{{ error }}</div>
+    }
+
+
+    <section class="section">
+      <div class="section-header">
+        <h2>Мои группы</h2>
+        <button class="btn-primary" (click)="goToGroups()">+ Создать / войти</button>
+      </div>
+
+      @if (loadingGroups) {
+        <p class="loading">Загружаем...</p>
+      } @else if (groups.length === 0) {
+        <div class="empty-card">
+          <p>Ты ещё не в группах</p>
+          <button class="btn-secondary" (click)="goToGroups()">Найти или создать группу</button>
+        </div>
+      } @else {
+        <div class="cards-grid">
+          @for (group of groups; track group.id) {
+            <a class="group-card" [routerLink]="['/groups', group.id]">
+              <div class="group-avatar">{{ group.name[0] }}</div>
+              <div class="group-info">
+                <h3>{{ group.name }}</h3>
+                <p>{{ group.description || 'Нет описания' }}</p>
+                <span class="members">👥 {{ group.members_count }} участников</span>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+
+    <section class="section">
+      <div class="section-header">
+        <h2>Приглашения</h2>
+        @if (invitations.length > 0) {
+          <span class="badge">{{ invitations.length }}</span>
+        }
+      </div>
+
+      @if (loadingInvitations) {
+        <p class="loading">Загружаем...</p>
+      } @else if (invitations.length === 0) {
+        <p class="empty-text">Нет новых приглашений</p>
+      } @else {
+        <div class="cards-grid">
+          @for (inv of invitations; track inv.id) {
+            <div class="invite-card">
+              <p>Тебя пригласили в <strong>{{ inv.group.name }}</strong></p>
+              <a routerLink="/invitations" class="btn-secondary">Посмотреть</a>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+  </div>
+</div>

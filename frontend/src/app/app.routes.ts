@@ -10,9 +10,25 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./pages/register/register').then(m => m.RegisterComponent)
   },
+  {
+     path: 'dashboard',
+     loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.DashboardComponent)
+  },
+  
   // {
-  //   path: 'dashboard',
-  //   loadComponent: () => import('./pages/dashboard/dashboard').then(m => m.DashboardComponent)
+  //   path: 'groups',
+  //   loadComponent: () => import('./pages/groups/groups').then(m => m.GroupsComponent)
   // },
-  // остальные добавим позже
+  // {
+  //   path: 'groups/:id',
+  //   loadComponent: () => import('./pages/groups/group-detail').then(m => m.GroupDetailComponent)
+  // },
+  // {
+  //   path: 'invitations',
+  //   loadComponent: () => import('./pages/invitations/invitations').then(m => m.InvitationsComponent)
+  // },
+  // {
+  //   path: 'profile',
+  //   loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent)
+  // },
 ];

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthTokens, LoginRequest, RegisterRequest, User } from '../models/user';
-
+import { Group, Event, Invitation } from '../models/group';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private base = 'http://localhost:8000';
@@ -18,7 +18,17 @@ export class ApiService {
       })
     );
   }
-
+  getGroups(): Observable<Group[]> {
+    return this.http.get<Group[]>(`${this.base}/groups/`);
+  }
+  getGroupEvents(groupId: number): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.base}/groups/${groupId}/events/`);
+  }
+  getInvitations(): Observable<Invitation[]> {
+    return this.http.get<Invitation[]>(`${this.base}/invitations/`);
+  }getProfile(): Observable<any> {
+    return this.http.get(`${this.base}/profile/`);
+  }
   register(data: RegisterRequest): Observable<User> {
     return this.http.post<User>(`${this.base}/auth/register/`, data);
   }
