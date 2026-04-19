@@ -19,8 +19,13 @@ export class ApiService {
     );
   }createGroup(data: { name: string; description: string }): Observable<Group> {
     return this.http.post<Group>(`${this.base}/groups/`, data);
+  }acceptInvitation(id: number): Observable<any> {
+    return this.http.post(`${this.base}/invitations/${id}/accept/`, {});
   }
 
+  declineInvitation(id: number): Observable<any> {
+    return this.http.post(`${this.base}/invitations/${id}/decline/`, {});
+  }
   joinGroup(code: string): Observable<Group> {
     return this.http.post<Group>(`${this.base}/groups/join/`, { code });
   }

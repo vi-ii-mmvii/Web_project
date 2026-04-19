@@ -1,1 +1,52 @@
-<p>invitations works!</p>
+<div class="page">
+
+  <nav class="navbar">
+    <a class="logo" routerLink="/dashboard">PlanSync</a>
+    <div class="nav-links">
+      <a routerLink="/dashboard">Главная</a>
+      <a routerLink="/groups">Группы</a>
+      <a routerLink="/profile">Профиль</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <h1>Приглашения</h1>
+
+    @if (error) {
+      <div class="error-box">{{ error }}</div>
+    }
+
+    @if (loading) {
+      <p class="loading">Загружаем...</p>
+    } @else if (invitations.length === 0) {
+      <div class="empty">
+        <p>Нет приглашений</p>
+      </div>
+    } @else {
+      <div class="list">
+        @for (inv of invitations; track inv.id) {
+          <div class="invite-card">
+            <div class="invite-info">
+              <div class="group-avatar">{{ inv.group.name[0] }}</div>
+              <div>
+                <h3>{{ inv.group.name }}</h3>
+                <p>{{ inv.group.description || 'Нет описания' }}</p>
+              </div>
+            </div>
+
+            @if (inv.status === 'pending') {
+              <div class="invite-actions">
+                <button class="btn-accept" (click)="accept(inv.id)">Принять</button>
+                <button class="btn-decline" (click)="decline(inv.id)">Отклонить</button>
+              </div>
+            } @else {
+              <span class="badge" [class.accepted]="inv.status === 'accepted'" [class.declined]="inv.status === 'declined'">
+                {{ inv.status === 'accepted' ? 'Принято' : 'Отклонено' }}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
