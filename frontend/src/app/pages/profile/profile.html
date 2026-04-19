@@ -1,1 +1,86 @@
-<p>profile works!</p>
+<div class="page">
+
+  <nav class="navbar">
+    <a class="logo" routerLink="/dashboard">PlanSync</a>
+    <div class="nav-links">
+      <a routerLink="/dashboard">Главная</a>
+      <a routerLink="/groups">Группы</a>
+      <a routerLink="/invitations">Приглашения</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <h1>Профиль</h1>
+
+    @if (error) {
+      <div class="error-box">{{ error }}</div>
+    }
+
+    @if (loading) {
+      <p class="loading">Загружаем...</p>
+    } @else if (profile) {
+
+      <div class="profile-card">
+
+
+        <div class="avatar">{{ profile.username[0].toUpperCase() }}</div>
+
+        @if (!editMode) {
+
+          <div class="profile-info">
+            <div class="info-row">
+              <span class="label">Имя пользователя</span>
+              <span class="value">{{ profile.username }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Email</span>
+              <span class="value">{{ profile.email }}</span>
+            </div>
+          </div>
+
+          @if (editSuccess) {
+            <div class="success-box">Профиль успешно обновлён</div>
+          }
+
+          <button class="btn-primary" (click)="editMode = true">
+            Редактировать
+          </button>
+
+        } @else {
+
+          <div class="form-group">
+            <label>Имя пользователя</label>
+            <input
+              type="text"
+              [(ngModel)]="editUsername"
+              class="input"
+              placeholder="username"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              [(ngModel)]="editEmail"
+              class="input"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          @if (editError) {
+            <div class="error-box">{{ editError }}</div>
+          }
+
+          <div class="form-actions">
+            <button class="btn-secondary" (click)="editMode = false">Отмена</button>
+            <button class="btn-primary" (click)="saveProfile()" [disabled]="editLoading">
+              {{ editLoading ? 'Сохраняем...' : 'Сохранить' }}
+            </button>
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+</div>

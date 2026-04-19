@@ -39,6 +39,8 @@ export class ApiService {
     return this.http.get<Invitation[]>(`${this.base}/invitations/`);
   }getProfile(): Observable<any> {
     return this.http.get(`${this.base}/profile/`);
+  }updateProfile(data: { username: string; email: string }): Observable<any> {
+    return this.http.put(`${this.base}/profile/`, data);
   }
   register(data: RegisterRequest): Observable<User> {
     return this.http.post<User>(`${this.base}/auth/register/`, data);
