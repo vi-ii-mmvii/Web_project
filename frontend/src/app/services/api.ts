@@ -5,7 +5,7 @@ import { AuthTokens, LoginRequest, RegisterRequest, User } from '../models/user'
 import { Group, Event, Invitation } from '../models/group';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = 'http://localhost:8000';
+  private base = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
