@@ -162,7 +162,13 @@
   </tbody>
 </table>
 
+---
 
+## 📊 Презентация проекта
+Вы можете ознакомиться с подробным обзором проекта и его архитектуры по ссылке ниже:
 
+> **https://kbtuedu-my.sharepoint.com/:p:/g/personal/ad_muratkyzy_kbtu_kz/IQAhECuExt32RJKYhHsIBKkjAeQgRn_doLFb84GULsaDN64?e=Jp0hRw**
+
+---
 <hr>
 

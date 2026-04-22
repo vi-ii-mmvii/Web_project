@@ -10,6 +10,9 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .logo {
@@ -33,9 +36,34 @@
 .nav-links a:hover { color: #4f46e5; }
 
 .content {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1rem;
+}
+
+.view-switcher {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.view-switcher button {
+  padding: 0.5rem 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.view-switcher button.active {
+  background: #4f46e5;
+  color: white;
+  border-color: #4f46e5;
 }
 
 .calendar-header {
@@ -53,6 +81,18 @@
   margin: 0;
   min-width: 200px;
   text-align: center;
+}
+
+.week-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.week-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
 }
 
 .nav-btn {
@@ -116,6 +156,55 @@
   color: #4f46e5;
 }
 
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.week-day {
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 0.5rem;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.week-day.today {
+  border-color: #4f46e5;
+  background: #f5f3ff;
+}
+
+.week-day-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.week-day-name {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.week-day-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.week-day.today .week-day-number {
+  color: #4f46e5;
+}
+
 .event-pill {
   font-size: 0.7rem;
   font-weight: 500;
@@ -124,6 +213,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-time {
+  font-size: 0.65rem;
+  opacity: 0.8;
 }
 
 .type-study { background: #eff6ff; color: #1d4ed8; }
@@ -144,4 +240,11 @@
   text-align: center;
   color: #9ca3af;
   padding: 3rem;
+}
+
+.no-events {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  text-align: center;
+  margin: auto;
 }

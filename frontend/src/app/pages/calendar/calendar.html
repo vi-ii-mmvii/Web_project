@@ -6,14 +6,16 @@
       <a routerLink="/groups">Группы</a>
       <a routerLink="/invitations">Приглашения</a>
       <a routerLink="/profile">Профиль</a>
+
     </div>
   </nav>
 
   <div class="content">
-    <div class="calendar-header">
-      <button class="nav-btn" (click)="prevMonth()">←</button>
-      <h1>{{ monthNames[currentMonth] }} {{ currentYear }}</h1>
-      <button class="nav-btn" (click)="nextMonth()">→</button>
+
+
+    <div class="view-switcher">
+      <button [class.active]="viewMode === 'month'" (click)="switchView('month')">Месяц</button>
+      <button [class.active]="viewMode === 'week'" (click)="switchView('week')">Неделя</button>
     </div>
 
     @if (error) {
@@ -23,24 +25,60 @@
     @if (loading) {
       <p class="loading">Загружаем события...</p>
     } @else {
-      <div class="calendar-grid">
-        @for (day of dayNames; track day) {
-          <div class="day-header">{{ day }}</div>
-        }
 
-        @for (cell of calendarDays; track $index) {
-          <div class="day-cell" [class.today]="isToday(cell.date)" [class.empty]="!cell.date">
-            @if (cell.date) {
-              <span class="day-number">{{ cell.date.getDate() }}</span>
-              @for (event of cell.events; track event.id) {
-                <div class="event-pill" [class]="getTypeClass(event.event_type)">
-                  {{ event.title }}
-                </div>
+      @if (viewMode === 'month') {
+        <div class="calendar-header">
+          <button class="nav-btn" (click)="prevMonth()">←</button>
+          <h1>{{ monthNames[currentMonth] }} {{ currentYear }}</h1>
+          <button class="nav-btn" (click)="nextMonth()">→</button>
+        </div>
+
+        <div class="calendar-grid">
+          @for (day of dayNames; track day) {
+            <div class="day-header">{{ day }}</div>
+          }
+
+          @for (cell of calendarDays; track $index) {
+            <div class="day-cell" [class.today]="isToday(cell.date)" [class.empty]="!cell.date">
+              @if (cell.date) {
+                <span class="day-number">{{ cell.date.getDate() }}</span>
+                @for (event of cell.events; track event.id) {
+                  <div class="event-pill" [class]="getTypeClass(event.event_type)">
+                    {{ event.title }}
+                  </div>
+                }
               }
-            }
-          </div>
-        }
-      </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (viewMode === 'week') {
+        <div class="week-header">
+          <h1>Текущая неделя</h1>
+        </div>
+
+        <div class="week-grid">
+          @for (day of weekDays; track day.date) {
+            <div class="week-day" [class.today]="isToday(day.date)">
+              <div class="week-day-header">
+                <span class="week-day-name">{{ day.date | date:'EEE' }}</span>
+                <span class="week-day-number">{{ day.date | date:'d' }}</span>
+              </div>
+              @if (day.events.length === 0) {
+                <p class="no-events">Нет событий</p>
+              } @else {
+                @for (event of day.events; track event.id) {
+                  <div class="event-pill" [class]="getTypeClass(event.event_type)">
+                    {{ event.title }}
+                    <span class="event-time">{{ event.start_time | date:'HH:mm':'UTC+5' }}</span>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      }
     }
   </div>
 </div>

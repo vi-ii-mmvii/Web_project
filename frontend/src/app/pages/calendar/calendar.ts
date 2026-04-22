@@ -18,6 +18,8 @@ export class CalendarComponent implements OnInit {
   loading = true;
   error = '';
 
+  viewMode: 'month' | 'week' = 'month';
+
   currentDate = new Date();
   currentMonth = this.currentDate.getMonth();
   currentYear = this.currentDate.getFullYear();
@@ -27,6 +29,7 @@ export class CalendarComponent implements OnInit {
   dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
 
   calendarDays: { date: Date | null, events: Event[] }[] = [];
+  weekDays: { date: Date, events: Event[] }[] = [];
 
   constructor(
     private api: ApiService,
@@ -47,6 +50,7 @@ export class CalendarComponent implements OnInit {
         if (groups.length === 0) {
           this.loading = false;
           this.buildCalendar();
+          this.buildWeek();
           return;
         }
         let loaded = 0;
@@ -58,6 +62,7 @@ export class CalendarComponent implements OnInit {
               if (loaded === groups.length) {
                 this.loading = false;
                 this.buildCalendar();
+                this.buildWeek();
                 this.cdr.markForCheck();
               }
             },
@@ -66,6 +71,7 @@ export class CalendarComponent implements OnInit {
               if (loaded === groups.length) {
                 this.loading = false;
                 this.buildCalendar();
+                this.buildWeek();
                 this.cdr.markForCheck();
               }
             }
@@ -84,17 +90,14 @@ export class CalendarComponent implements OnInit {
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
 
-
     let startDow = firstDay.getDay() - 1;
     if (startDow < 0) startDow = 6;
 
     this.calendarDays = [];
 
-
     for (let i = 0; i < startDow; i++) {
       this.calendarDays.push({ date: null, events: [] });
     }
-
 
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const date = new Date(this.currentYear, this.currentMonth, d);
@@ -106,6 +109,29 @@ export class CalendarComponent implements OnInit {
       });
       this.calendarDays.push({ date, events });
     }
+  }
+
+  buildWeek() {
+    const today = new Date();
+    const monday = new Date(today);
+    const day = today.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    monday.setDate(today.getDate() + diff);
+
+    this.weekDays = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      const events = this.allEvents.filter(e => {
+        const eventDate = new Date(e.start_time);
+        return eventDate.toDateString() === date.toDateString();
+      });
+      this.weekDays.push({ date, events });
+    }
+  }
+
+  switchView(mode: 'month' | 'week') {
+    this.viewMode = mode;
   }
 
   prevMonth() {
