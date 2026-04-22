@@ -7,7 +7,7 @@ import { Poll, PollOption, PollResults } from '../models/poll';
 import { getStorageItem, setStorageItem, removeStorageItem } from '../utils/storage';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private base = 'http://localhost:8000/api';
+  private base = 'https://enthusiastic-enthusiasm-projext.up.railway.app/api';
 
   constructor(private http: HttpClient) {}
 
