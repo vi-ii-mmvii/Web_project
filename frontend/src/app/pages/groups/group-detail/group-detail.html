@@ -23,7 +23,7 @@
         <div>
           <h1>{{ group.name }}</h1>
           <p>{{ group.description || 'Нет описания' }}</p>
-          <span class="members"> {{ group.members.length }} участников</span>
+          <span class="members"> {{ group.members.length + 1}} участников</span>
         </div>
         @if (isOwner()) {
           <button class="btn-secondary invite-btn" (click)="showInviteForm = !showInviteForm">
@@ -128,8 +128,8 @@
                   </span>
                   <h3>{{ event.title }}</h3>
                   <p class="event-meta">
-                     {{ event.start_time | date:'dd.MM.yyyy HH:mm' }}
-                    — {{ event.end_time | date:'HH:mm' }}
+                    {{ event.start_time | date:'dd.MM.yyyy HH:mm':'UTC+5' }}
+                    — {{ event.end_time | date:'HH:mm':'UTC+5' }}
                     @if (event.location) {
                       ·  {{ event.location }}
                     }

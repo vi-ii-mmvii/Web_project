@@ -111,8 +111,9 @@ export class GroupDetailComponent implements OnInit {
       description: this.eventDescription,
       location: this.eventLocation,
       event_type: this.eventType,
-      start_time: this.eventStartTime,
-      end_time: this.eventEndTime,
+      start_time: this.eventStartTime + ':00',
+      end_time: this.eventEndTime + ':00',
+      team: this.groupId,
     }).subscribe({
       next: (event) => {
         this.events.push(event);
