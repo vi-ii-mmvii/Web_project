@@ -4,8 +4,8 @@
   <nav class="navbar">
     <span class="logo">PlanSync</span>
     <div class="nav-links">
-      <a routerLink="/calendar">Календарь</a>
       <a routerLink="/groups">Группы</a>
+      <a routerLink="/calendar">Календарь</a>
       <a routerLink="/invitations">Приглашения</a>
       <a routerLink="/profile">Профиль</a>
       <button class="btn-logout" (click)="logout()">Выйти</button>
@@ -46,7 +46,7 @@
               <div class="group-info">
                 <h3>{{ group.name }}</h3>
                 <p>{{ group.description || 'Нет описания' }}</p>
-                <span class="members">👥 {{ group.members.length }} участников</span>
+                <span class="members">👥 {{ group.members.length + 1}} участников</span>
               </div>
             </a>
           }
