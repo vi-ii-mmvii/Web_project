@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api';
@@ -11,13 +11,19 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   username = '';
   password = '';
   error = '';
   loading = false;
 
   constructor(private api: ApiService, private router: Router) {}
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && localStorage.getItem('access')) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
 
   onLogin() {
     this.error = '';

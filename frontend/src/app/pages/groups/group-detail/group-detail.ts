@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../services/api';
 import { Group, Event } from '../../../models/group';
+import { Poll, PollOption } from '../../../models/poll';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-group-detail',
@@ -29,12 +31,51 @@ export class GroupDetailComponent implements OnInit {
   eventLoading = false;
   eventError = '';
 
+  currentUser: User | null = null;
+
+  // Invite
+  showInviteForm = false;
+  inviteUsername = '';
+  inviteLoading = false;
+  inviteError = '';
+  inviteSuccess = false;
+
+  // Polls
+  polls: Poll[] = [];
+  showPollForm = false;
+  pollTitle = '';
+  pollDescription = '';
+  pollDeadline = '';
+  pollOptions: string[] = ['', ''];
+  pollLoading = false;
+  pollError = '';
+
   constructor(private api: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit() {
     this.groupId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadCurrentUser();
     this.loadGroup();
     this.loadEvents();
+    this.loadPolls();
+  }
+
+  loadCurrentUser() {
+    this.api.getProfile().subscribe({
+      next: (user) => this.currentUser = user,
+      error: () => {}
+    });
+  }
+
+  loadPolls() {
+    this.api.getPolls(this.groupId).subscribe({
+      next: (polls) => this.polls = polls,
+      error: () => {}
+    });
+  }
+
+  isOwner(): boolean {
+    return !!this.group && !!this.currentUser && this.group.owner?.id === this.currentUser.id;
   }
 
   loadGroup() {
@@ -104,5 +145,113 @@ export class GroupDetailComponent implements OnInit {
 
   getTypeClass(type: string): string {
     return `type-${type}`;
+  }
+
+  sendInvite() {
+    if (!this.inviteUsername.trim()) {
+      this.inviteError = 'Введите username';
+      return;
+    }
+    this.inviteLoading = true;
+    this.inviteError = '';
+    this.inviteSuccess = false;
+
+    this.api.inviteUser(this.groupId, this.inviteUsername.trim()).subscribe({
+      next: () => {
+        this.inviteSuccess = true;
+        this.inviteUsername = '';
+        this.inviteLoading = false;
+        setTimeout(() => this.inviteSuccess = false, 3000);
+      },
+      error: (err) => {
+        this.inviteError = err.error?.detail || 'Ошибка при отправке приглашения';
+        this.inviteLoading = false;
+      }
+    });
+  }
+
+  addPollOption() {
+    this.pollOptions.push('');
+  }
+
+  removePollOption(index: number) {
+    if (this.pollOptions.length > 2) {
+      this.pollOptions.splice(index, 1);
+    }
+  }
+
+  createPoll() {
+    const filled = this.pollOptions.filter(o => o.trim());
+    if (!this.pollTitle.trim()) {
+      this.pollError = 'Введите название опроса';
+      return;
+    }
+    if (!this.pollDeadline) {
+      this.pollError = 'Укажите дедлайн';
+      return;
+    }
+    if (filled.length < 2) {
+      this.pollError = 'Нужно минимум 2 варианта';
+      return;
+    }
+    this.pollLoading = true;
+    this.pollError = '';
+
+    this.api.createPoll(this.groupId, {
+      title: this.pollTitle,
+      description: this.pollDescription,
+      deadline: this.pollDeadline,
+      options: filled.map(datetime => ({ datetime }))
+    }).subscribe({
+      next: (poll) => {
+        this.polls.unshift(poll);
+        this.resetPollForm();
+        this.pollLoading = false;
+      },
+      error: (err) => {
+        this.pollError = err.error?.title?.[0] || err.error?.deadline?.[0] || 'Ошибка при создании опроса';
+        this.pollLoading = false;
+      }
+    });
+  }
+
+  resetPollForm() {
+    this.showPollForm = false;
+    this.pollTitle = '';
+    this.pollDescription = '';
+    this.pollDeadline = '';
+    this.pollOptions = ['', ''];
+  }
+
+  voteOption(poll: Poll, option: PollOption) {
+    if (poll.is_closed) return;
+    const action = option.has_voted ? 'unvote' : 'vote';
+    this.api.vote(this.groupId, poll.id, option.id, action).subscribe({
+      next: (updated) => {
+        const p = this.polls.find(x => x.id === poll.id);
+        if (p) {
+          const idx = p.options.findIndex(o => o.id === option.id);
+          if (idx >= 0) p.options[idx] = updated;
+        }
+      },
+      error: () => {}
+    });
+  }
+
+  deletePoll(pollId: number) {
+    if (!confirm('Удалить опрос?')) return;
+    this.api.deletePoll(this.groupId, pollId).subscribe({
+      next: () => this.polls = this.polls.filter(p => p.id !== pollId),
+      error: () => {}
+    });
+  }
+
+  getWinner(poll: Poll): PollOption | null {
+    if (!poll.is_closed || poll.options.length === 0) return null;
+    return poll.options.reduce((max, o) => o.vote_count > max.vote_count ? o : max, poll.options[0]);
+  }
+
+  canDeletePoll(poll: Poll): boolean {
+    return !!this.currentUser && poll.created_by === this.currentUser.username;
   }
 }

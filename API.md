@@ -22,7 +22,7 @@ Format: JSON
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET/POST | `/groups/` | Список групп / создать группу |
-| GET/PUT/DELETE | `/groups/<id>/` | Детали / изменить / удалить |
+| GET/PUT/DELETE | `/groups/<id>/` | Детали / изменить/удалить |
 | POST | `/groups/<id>/join/` | Вступить по коду |
 | GET | `/groups/<id>/members/` | Список участников |
 
@@ -35,7 +35,7 @@ Format: JSON
 | GET/POST | `/groups/<id>/events/` | Список событий / создать |
 | GET/PUT/DELETE | `/groups/<id>/events/<id>/` | Детали / изменить / удалить |
 | POST | `/groups/<id>/events/<id>/rsvp/` | Going / Maybe / Not going |
-
+ 
 ---
 
 ## Polls

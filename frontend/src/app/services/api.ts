@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthTokens, LoginRequest, RegisterRequest, User } from '../models/user';
 import { Group, Event, Invitation } from '../models/group';
+import { Poll, PollOption, PollResults } from '../models/poll';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private base = 'http://localhost:8000/api';
@@ -27,10 +28,10 @@ export class ApiService {
     return this.http.post(`${this.base}/invitations/${id}/decline/`, {});
   }
   joinGroup(code: string): Observable<Group> {
-    return this.http.post<Group>(`${this.base}/groups/join/`, { code });
+    return this.http.post<Group>(`${this.base}/groups/join/`, { invite_code: code });
   }
-  joinGroupById(id: number): Observable<Group> {
-    return this.http.post<Group>(`${this.base}/groups/${id}/join/`, {});
+  inviteUser(groupId: number, username: string): Observable<Invitation> {
+    return this.http.post<Invitation>(`${this.base}/groups/${groupId}/invite/`, { username });
   }
   getGroups(): Observable<Group[]> {
     return this.http.get<Group[]>(`${this.base}/groups/`);
@@ -47,8 +48,15 @@ export class ApiService {
   }updateProfile(data: { username: string; email: string }): Observable<any> {
     return this.http.put(`${this.base}/profile/`, data);
   }
-  register(data: RegisterRequest): Observable<User> {
-    return this.http.post<User>(`${this.base}/auth/register/`, data);
+  register(data: RegisterRequest): Observable<{user: User; access: string; refresh: string}> {
+    return this.http.post<{user: User; access: string; refresh: string}>(
+      `${this.base}/auth/register/`, data
+    ).pipe(
+      tap(res => {
+        localStorage.setItem('access', res.access);
+        localStorage.setItem('refresh', res.refresh);
+      })
+    );
   }
 
   logout(): Observable<any> {
@@ -76,6 +84,34 @@ export class ApiService {
     return this.http.post<{ access: string }>(`${this.base}/auth/token/refresh/`, { refresh }).pipe(
       tap(res => localStorage.setItem('access', res.access))
     );
+  }
+
+  getPolls(groupId: number): Observable<Poll[]> {
+    return this.http.get<Poll[]>(`${this.base}/groups/${groupId}/polls/`);
+  }
+
+  createPoll(groupId: number, data: {
+    title: string;
+    description: string;
+    deadline: string;
+    options: { datetime: string }[];
+  }): Observable<Poll> {
+    return this.http.post<Poll>(`${this.base}/groups/${groupId}/polls/`, data);
+  }
+
+  deletePoll(groupId: number, pollId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/groups/${groupId}/polls/${pollId}/`);
+  }
+
+  vote(groupId: number, pollId: number, optionId: number, action: 'vote' | 'unvote'): Observable<PollOption> {
+    return this.http.post<PollOption>(
+      `${this.base}/groups/${groupId}/polls/${pollId}/vote/`,
+      { option_id: optionId, action }
+    );
+  }
+
+  getPollResults(groupId: number, pollId: number): Observable<PollResults> {
+    return this.http.get<PollResults>(`${this.base}/groups/${groupId}/polls/${pollId}/results/`);
   }
 
   isLoggedIn(): boolean {

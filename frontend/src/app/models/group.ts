@@ -37,5 +37,8 @@ export interface RSVP {
 export interface Invitation {
   id: number;
   group: Group;
+  invited_user: Member;
+  invited_by: Member;
   status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
 }
